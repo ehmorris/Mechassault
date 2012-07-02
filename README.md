@@ -8,3 +8,7 @@ unless Rails.env.production?
   ENV['MYNEU_PASSWORD'] = 'password'
 end
 ```
+# REFERENCES
+* nokogiri (HTML parser) http://hunterpowers.com/data-scraping-and-more-with-ruby-nokogiri-sinatra-and-heroku/
+* mechanize general doc http://mechanize.rubyforge.org/Mechanize.html
+* mechanize examples http://mechanize.rubyforge.org/EXAMPLES_rdoc.html
