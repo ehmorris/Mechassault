@@ -1,4 +1,4 @@
-== SETUP
+# SETUP
 
 setup your myneu username / password locally under `config/initializers/dev_enviornment.rb`
 
