@@ -15,4 +15,4 @@
 /tmp
 
 # Ignore MyNEU credentials
-/config/initializers/dev_enviornment.rb
+/config/initializers/dev_environment.rb
