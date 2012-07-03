@@ -1,7 +1,6 @@
 # SETUP
 
-setup your myneu username / password locally under `config/initializers/dev_enviornment.rb`
-
+setup your myneu username / password locally under `config/initializers/dev_environment.rb`
 ```
 unless Rails.env.production?
   ENV['MYNEU_USERNAME'] = 'username'
