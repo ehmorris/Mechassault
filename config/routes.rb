@@ -1,3 +1,3 @@
 Mechassault::Application.routes.draw do
-  root to: 'scrape#show'
+  root to: 'scraper#show'
 end

@@ -1,5 +1,8 @@
-class ScrapeController < ApplicationController
-  def show
+class Scraper < ActiveRecord::Base
+  require 'mechanize'
+
+  # Scrapes MyNEU's course pages
+  def self.scrape_dat
     agent = Mechanize.new
     root_url = 'http://bnr8ssbp.neu.edu/udcprod8/bwskfcls.p_sel_crse_search'
 
@@ -25,6 +28,11 @@ class ScrapeController < ApplicationController
     end
     course_info = course_options_form.submit
 
-    @test = course_info
+    course_info
+  end
+
+  # Throws courses into database
+  def self.throw_it_on_the_ground
+    # TODO: write this code
   end
 end
