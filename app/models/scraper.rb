@@ -4,7 +4,10 @@ class Scraper < ActiveRecord::Base
   # Scrapes MyNEU's course pages
   def self.scrape_dat
     agent = Mechanize.new
+
     root_url = 'http://bnr8ssbp.neu.edu/udcprod8/bwskfcls.p_sel_crse_search'
+    # Fall 2012 semester
+    semester_value = '201310'
 
     # login
     login_page = agent.get(root_url)
@@ -16,8 +19,9 @@ class Scraper < ActiveRecord::Base
     # reload to get to the semester selection form
     semester_select_page = agent.get(root_url)
     semester_select_form = semester_select_page.forms.last
-    #select most recent semester
-    semester_select_form.field_with(:dom_id => 'term_input_id').options.first(2).last.tick
+    #select fall 2012 semester
+    semester_select_box = semester_select_form.field_with(:dom_id => 'term_input_id')
+    .option_with(:value => semester_value).tick
     filter_options = semester_select_form.submit
 
     # course filter option page
@@ -25,10 +29,11 @@ class Scraper < ActiveRecord::Base
     #check all subjects
     course_options_form.field_with(:dom_id => 'subj_id').options.each do |o|
       o.tick
+      break # remove to fetch all classes
     end
     course_info = course_options_form.submit
 
-    course_info
+    courses_html = course_info.search("table.datadisplaytable tr")
   end
 
   # Throws courses into database
