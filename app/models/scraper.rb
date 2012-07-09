@@ -33,7 +33,25 @@ class Scraper < ActiveRecord::Base
     end
     course_info = course_options_form.submit
 
-    courses_html = course_info.search("table.datadisplaytable tr")
+    courses_html = course_info.search('table.datadisplaytable tr')
+
+    courses_json = courses_html.map do |row|
+      # make sure this row is a class data row
+      #if row.children.count > 2 and row.search('> td.dddefault').count
+      {
+        :closed     => row.search('>:nth-child(1)').inner_text,
+        :crn        => row.search('>:nth-child(2)').inner_text,
+        :subject    => row.search('>:nth-child(3)').inner_text,
+        :coursenum  => row.search('>:nth-child(4)').inner_text,
+        :section    => row.search('>:nth-child(5)').inner_text,
+        :campus     => row.search('>:nth-child(6)').inner_text
+      }
+      #end
+    end.to_json
+
+    #courses_json = courses_html.last.search('>:nth-child(1)').inner_text
+
+    courses_json
   end
 
   # Throws courses into database
