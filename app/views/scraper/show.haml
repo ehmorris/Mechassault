@@ -1,2 +1,4 @@
-%pre
-  = @test
+- @test.each do |course|
+  - if course
+    %pre
+      = course
