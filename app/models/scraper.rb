@@ -40,8 +40,13 @@ class Scraper < ActiveRecord::Base
       # check to make sure the CRN field has a CRN
       if row.search('>:nth-child(2)').inner_text.to_i.is_a? Integer and
          row.search('>:nth-child(2)').inner_text.to_i > 0
+        if row.search('>:nth-child(1)').inner_text == 'C'
+          closed = true
+        else
+          closed = false
+        end
         {
-          :closed     => row.search('>:nth-child(1)').inner_text,
+          :closed     => closed,
           :crn        => row.search('>:nth-child(2)').inner_text,
           :subject    => row.search('>:nth-child(3)').inner_text,
           :coursenum  => row.search('>:nth-child(4)').inner_text,
