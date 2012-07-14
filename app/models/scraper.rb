@@ -33,41 +33,66 @@ class Scraper < ActiveRecord::Base
     end
     course_info = course_options_form.submit
 
+    # store all html data
     courses_html = course_info.search('table.datadisplaytable tr')
 
+    # generate hash from parsed html data
     courses_hash = courses_html.map do |row|
+      # convert closed field to a boolean
+      closed = false
+      closed = true if row.search('>:nth-child(1)').inner_text == 'C'
+
+      # gather all class data
+      crn        = row.search('>:nth-child(2)').inner_text
+      subject    = row.search('>:nth-child(3)').inner_text
+      coursenum  = row.search('>:nth-child(4)').inner_text
+      section    = row.search('>:nth-child(5)').inner_text
+      campus     = row.search('>:nth-child(6)').inner_text
+      credits    = row.search('>:nth-child(7)').inner_text
+      title      = row.search('>:nth-child(8)').inner_text
+      days       = row.search('>:nth-child(9)').inner_text
+      time       = row.search('>:nth-child(10)').inner_text
+      capacity   = row.search('>:nth-child(11)').inner_text
+      actual     = row.search('>:nth-child(12)').inner_text
+      remaining  = row.search('>:nth-child(13)').inner_text
+      instructor = row.search('>:nth-child(14)').inner_text
+      date       = row.search('>:nth-child(15)').inner_text
+      location   = row.search('>:nth-child(16)').inner_text
+      attribute  = row.search('>:nth-child(17)').inner_text
+
+      # determine whether or not the current row is paired with the previous
+      # row - i.e. when a class has different times on different days, or
+      # when a class only occurs twice and both dates are listed
+      pair = false
+      pair = true if crn.blank? and !days.blank? and !time.blank? and capacity.blank?
+
       # make sure this row is a class data row
       # check to make sure the CRN field has a CRN
-      if row.search('>:nth-child(2)').inner_text.to_i.is_a? Integer and
-         row.search('>:nth-child(2)').inner_text.to_i > 0
-        if row.search('>:nth-child(1)').inner_text == 'C'
-          closed = true
-        else
-          closed = false
-        end
+      # if the row was tagged as a pair, also get its data
+      if (crn.to_i.is_a? Integer and crn.to_i > 0) or pair
+        # put data into a hash
         {
+          :pair       => pair,
           :closed     => closed,
-          :crn        => row.search('>:nth-child(2)').inner_text,
-          :subject    => row.search('>:nth-child(3)').inner_text,
-          :coursenum  => row.search('>:nth-child(4)').inner_text,
-          :section    => row.search('>:nth-child(5)').inner_text,
-          :campus     => row.search('>:nth-child(6)').inner_text,
-          :credits    => row.search('>:nth-child(7)').inner_text,
-          :title      => row.search('>:nth-child(8)').inner_text,
-          :days       => row.search('>:nth-child(9)').inner_text,
-          :time       => row.search('>:nth-child(10)').inner_text,
-          :capacity   => row.search('>:nth-child(11)').inner_text,
-          :actual     => row.search('>:nth-child(12)').inner_text,
-          :remaining  => row.search('>:nth-child(13)').inner_text,
-          :instructor => row.search('>:nth-child(14)').inner_text,
-          :date       => row.search('>:nth-child(15)').inner_text,
-          :location   => row.search('>:nth-child(16)').inner_text,
-          :attribute  => row.search('>:nth-child(17)').inner_text
+          :crn        => crn,
+          :subject    => subject,
+          :coursenum  => coursenum,
+          :section    => section,
+          :campus     => campus,
+          :credits    => credits,
+          :title      => title,
+          :days       => days,
+          :time       => time,
+          :capacity   => capacity,
+          :actual     => actual,
+          :remaining  => remaining,
+          :instructor => instructor,
+          :date       => date,
+          :location   => location,
+          :attribute  => attribute
         }
       end
     end
-
-    #courses_json = courses_html.last.search('>:nth-child(1)').inner_text
 
     courses_hash
   end
