@@ -1,8 +1,7 @@
 class Scraper < ActiveRecord::Base
-  require 'mechanize'
 
-  # Scrapes MyNEU's course pages
   def self.scrape_dat
+    require 'mechanize'
     agent = Mechanize.new
 
     root_url = 'http://bnr8ssbp.neu.edu/udcprod8/bwskfcls.p_sel_crse_search'
@@ -36,8 +35,12 @@ class Scraper < ActiveRecord::Base
     # store all html data
     courses_html = course_info.search('table.datadisplaytable tr')
 
+    return courses_html
+  end
+
+  def self.parse_dat
     # generate hash from parsed html data
-    courses_hash = courses_html.map do |row|
+    courses_hash = self.scrape_dat.map do |row|
       # convert closed field to a boolean
       closed = false
       closed = true if row.search('>:nth-child(1)').inner_text == 'C'
@@ -94,11 +97,27 @@ class Scraper < ActiveRecord::Base
       end
     end
 
-    courses_hash
+    # squash pairs together, remove nil entries
+    courses_hash.each.with_index do |course, e|
+      # there will be some nil entries in courses_hash
+      if course
+        if course[:pair]
+          # replace previous entry with combo of this and previous entry
+          courses_hash[e-1][:paired_entry] = course
+
+          # remove this entry after squashing it
+          courses_hash.delete(course)
+        end
+
+        course.delete(:pair)
+      end
+    end
+
+    return courses_hash
   end
 
   # Throws courses into database
-  def self.throw_it_on_the_ground
+  def self.save_dat
     # TODO: write this code
   end
 end

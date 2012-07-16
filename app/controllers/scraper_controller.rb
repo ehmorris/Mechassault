@@ -1,5 +1,5 @@
 class ScraperController < ApplicationController
   def show
-    @test = Scraper.scrape_dat
+    @test = Scraper.parse_dat
   end
 end
