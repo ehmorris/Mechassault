@@ -71,11 +71,10 @@ class Scraper < ActiveRecord::Base
 
       # make sure this row is a class data row
       # check to make sure the CRN field has a CRN
-      # if the row was tagged as a pair, also get its data
-      if (crn.to_i.is_a? Integer and crn.to_i > 0) or pair
+      # if the row was tagged as a pair, get its reduced dataset
+      if crn.to_i > 0
         # put data into a hash
         {
-          :pair       => pair,
           :closed     => closed,
           :crn        => crn,
           :subject    => subject,
@@ -89,6 +88,16 @@ class Scraper < ActiveRecord::Base
           :capacity   => capacity,
           :actual     => actual,
           :remaining  => remaining,
+          :instructor => instructor,
+          :date       => date,
+          :location   => location,
+          :attribute  => attribute
+        }
+      elsif pair
+        {
+          :pair       => pair,
+          :days       => days,
+          :time       => time,
           :instructor => instructor,
           :date       => date,
           :location   => location,
