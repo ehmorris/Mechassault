@@ -63,9 +63,9 @@ class Scraper < ActiveRecord::Base
       location   = row.search('>:nth-child(16)').inner_text
       attribute  = row.search('>:nth-child(17)').inner_text
 
-      # determine whether or not the current row is paired with the previous
-      # row - i.e. when a class has different times on different days, or
-      # when a class only occurs twice and both dates are listed
+      # determine if the current row is paired with the previous row
+      # i.e. when a class has different times on different days,
+      # or when a class only occurs twice and both dates are listed
       pair = false
       pair = true if crn.blank? and !days.blank? and !time.blank? and capacity.blank?
 
@@ -106,19 +106,22 @@ class Scraper < ActiveRecord::Base
       end
     end
 
-    # squash pairs together, remove nil entries
+    # squash pairs together, remove nil entries, determine type of pairing
     courses_hash.each.with_index do |course, e|
       # there will be some nil entries in courses_hash
       if course
         if course[:pair]
+          pair_type = 'seminar'
+          pair_type = 'classtime' if course[:date] == courses_hash[e-1][:date]
+
+          course[:pair_type] = pair_type
+
           # replace previous entry with combo of this and previous entry
           courses_hash[e-1][:paired_entry] = course
 
           # remove this entry after squashing it
           courses_hash.delete(course)
         end
-
-        course.delete(:pair)
       end
     end
 
