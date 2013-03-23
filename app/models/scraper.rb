@@ -4,9 +4,11 @@ class Scraper < ActiveRecord::Base
     require 'mechanize'
     agent = Mechanize.new
 
-    root_url = 'http://bnr8ssbp.neu.edu/udcprod8/bwskfcls.p_sel_crse_search'
-    # Fall 2012 semester
-    semester_value = '201310'
+    root_url = 'http://wl11gp.neu.edu/udcprod8/bwskfcls.p_sel_crse_search'
+    # Fall 2013 semester
+    # [year]10 is fall i.e. Fall 2013 is 201410 (the academic year is just the year of spring)
+    # [year]30 is spring i.e. Spring 2013 is 201430
+    semester_value = '201410'
 
     # login
     login_page = agent.get(root_url)
